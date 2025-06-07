@@ -1,10 +1,9 @@
 const express = require("express");
 const { readings } = require("./readings/readings");
 const { readingsData } = require("./readings/readings.data");
-const { read, store } = require("./readings/readings-controller");
-const { recommend, compare } = require("./price-plans/price-plans-controller");
+const { read, store, summarize } = require("./readings/readings-controller");
+const { recommend, compare, switchPlan } = require("./price-plans/price-plans-controller");
 const { readByTimeRange } = require("./readings/readings-controller");
-const { summarize } = require("./readings/readings-controller");
 
 const app = express();
 app.use(express.json());
@@ -27,6 +26,7 @@ app.get("/price-plans/compare-all/:smartMeterId", (req, res) => {
     res.send(compare(getReadings, req));
 });
 
+
 // Get readings by time range ::
 app.get("/readings/read-by-time-range/:smartMeterId", (req, res) => {
   const data = readByTimeRange(getReadings, req);
@@ -44,6 +44,16 @@ app.get("/readings/summary/:smartMeterId", (req, res) => {
     return res.status(404).send(summary);
   }
   res.send(summary);
+});
+
+
+// Switching the price plan for a smart-meter endpoint ::
+app.post("/price-plans/switch", (req, res) => {
+  const result = switchPlan(req);
+  if (result.error) {
+    return res.status(400).send(result);
+  }
+  res.send(result);
 });
 
 const port = process.env.PORT || 8080;

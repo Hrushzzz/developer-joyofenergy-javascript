@@ -1,6 +1,8 @@
 const { pricePlans } = require("./price-plans");
 const { usageForAllPricePlans } = require("../usage/usage");
 
+const currentPricePlanPerMeter = {};
+
 const recommend = (getReadings, req) => {
     const meter = req.params.smartMeterId;
     const pricePlanComparisons = usageForAllPricePlans(pricePlans, getReadings(meter)).sort((a, b) => extractCost(a) - extractCost(b))
@@ -24,4 +26,28 @@ const compare = (getData, req) => {
     };
 };
 
-module.exports = { recommend, compare };
+
+// Switching the price plan for a smart-meter ::
+const switchPlan = (req) => {
+  const { smartMeterId, newPricePlan } = req.body;
+
+  if (!smartMeterId || !newPricePlan) {
+    return { error: "smartMeterId and newPricePlan are required" };
+  }
+
+  // validating if the new plan exists
+  const validPlans = Object.keys(pricePlans);
+  if (!validPlans.includes(newPricePlan)) {
+    return { error: "Invalid price plan" };
+  }
+
+  currentPricePlanPerMeter[smartMeterId] = newPricePlan;
+
+  return {
+    message: `Price plan for ${smartMeterId} successfully switched to ${newPricePlan}`,
+    currentPricePlanPerMeter,
+  };
+};
+
+
+module.exports = { recommend, compare, switchPlan };
