@@ -37,7 +37,7 @@ const readByTimeRange = (getData, req) => {
 // Adding aggregated usage summary :::
 const summarize = (getData, req) => {
   const meterId = req.params.smartMeterId;
-  const readings = getData(meterId);
+  let readings = getData(meterId);
   const from = parseInt(req.query.from);
   const to = parseInt(req.query.to);
 

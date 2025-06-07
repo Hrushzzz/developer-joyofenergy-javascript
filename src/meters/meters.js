@@ -13,8 +13,8 @@ const meterPricePlanMap = {
     [meters.METER1]: pricePlans[pricePlanNames.PRICEPLAN1],
     [meters.METER2]: pricePlans[pricePlanNames.PRICEPLAN2],
     // Adding new meters ::
-    [meters.METER3]: pricePlans[pricePlanNames.PRICEPLAN3],
-    [meters.METER4]: pricePlans[pricePlanNames.PRICEPLAN4],
+    [meters.METER3]: pricePlans[pricePlanNames.PRICEPLAN2],
+    [meters.METER4]: pricePlans[pricePlanNames.PRICEPLAN2],
 };
 
 module.exports = { meterPricePlanMap, meters };

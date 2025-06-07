@@ -1,9 +1,14 @@
 const express = require("express");
 const { readings } = require("./readings/readings");
+const { meterPricePlanMap } = require('./meters/meters');
+const { getMetersForPricePlan } = require('./meters/meters-controller');
 const { readingsData } = require("./readings/readings.data");
 const { read, store, summarize } = require("./readings/readings-controller");
 const { recommend, compare, switchPlan } = require("./price-plans/price-plans-controller");
+const { handlePricePlanSwitch } = require('./price-plans/price-plans-controller');
 const { readByTimeRange } = require("./readings/readings-controller");
+const { pricePlans } = require("./price-plans/price-plans");
+
 
 const app = express();
 app.use(express.json());
@@ -25,6 +30,9 @@ app.get("/price-plans/recommend/:smartMeterId", (req, res) => {
 app.get("/price-plans/compare-all/:smartMeterId", (req, res) => {
     res.send(compare(getReadings, req));
 });
+
+// Endpoint to get meters for a specific price plan ::
+app.get('/meters/for-plan/:pricePlanId', getMetersForPricePlan);
 
 
 // Get readings by time range ::
@@ -55,6 +63,7 @@ app.post("/price-plans/switch", (req, res) => {
   }
   res.send(result);
 });
+
 
 const port = process.env.PORT || 8080;
 app.listen(port);
