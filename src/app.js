@@ -1,5 +1,6 @@
 const express = require("express");
 const { readings } = require("./readings/readings");
+const { getStats } = require("./readings/readings-controller")
 const { meterPricePlanMap } = require('./meters/meters');
 const { getMetersForPricePlan } = require('./meters/meters-controller');
 const { readingsData } = require("./readings/readings.data");
@@ -14,6 +15,25 @@ const app = express();
 app.use(express.json());
 
 const { getReadings, setReadings } = readings(readingsData);
+
+// Story #2345 - Display Cost of Last Week's Usage
+
+// Description:
+// As an electricity consumer I want to be able to view my usage cost of the last week so that I can monitor my spending
+
+// Given I have a smart meter ID with price plan attached to it and usage data stored,
+//  when I request the usage cost then I am shown the correct cost of last week's usage.
+
+// Given I have a smart meter ID without a price plan attached to it and usage data stored, 
+// when I request the usage cost then an error message is displayed
+
+app.get("/meter/get-stats/:smartMeterId", (req, res) => {
+  const result = getStats(getReadings, req);
+  if (result.error) {
+    return res.status(400).send(result);
+  }
+  res.send(result);
+});
 
 app.get("/readings/read/:smartMeterId", (req, res) => {
     res.send(read(getReadings, req));
@@ -62,6 +82,12 @@ app.post("/price-plans/switch", (req, res) => {
     return res.status(400).send(result);
   }
   res.send(result);
+});
+
+
+app.get("/sampleEndpoint", (req, res) => {
+  console.log("This is a dummy log");
+  res.send("This is a dummy log");
 });
 
 
